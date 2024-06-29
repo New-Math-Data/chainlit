@@ -350,14 +350,15 @@ class OktaOAuthProvider(OAuthProvider):
             response.raise_for_status()
             json_data = response.json()
 
-            token = json_data.get("access_token")
-            if not token:
+            access_token = json_data.get("access_token")
+            id_token = json_data.get("id_token")
+            if not access_token:
                 raise httpx.HTTPStatusError(
                     "Failed to get the access token",
                     request=response.request,
                     response=response,
                 )
-            return token
+            return access_token, id_token
 
     async def get_user_info(self, token: str):
         async with httpx.AsyncClient() as client:

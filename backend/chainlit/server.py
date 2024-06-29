@@ -494,12 +494,12 @@ async def oauth_callback(
         )
 
     url = get_user_facing_url(request.url)
-    token = await provider.get_token(code, url)
+    access_token, id_token = await provider.get_token(code, url)
 
-    (raw_user_data, default_user) = await provider.get_user_info(token)
+    (raw_user_data, default_user) = await provider.get_user_info(access_token)
 
     user = await config.code.oauth_callback(
-        provider_id, token, raw_user_data, default_user
+        provider_id, access_token, id_token, raw_user_data, default_user
     )
 
     if not user:
