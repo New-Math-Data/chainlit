@@ -236,22 +236,9 @@ if os.environ.get("TEAMS_APP_ID") and os.environ.get("TEAMS_APP_PASSWORD"):
     from botbuilder.schema import Activity
     from chainlit.teams.app import adapter, bot
 
-    from azure.identity.aio import ClientSecretCredential
-    from msgraph import GraphServiceClient
-
-    credential = ClientSecretCredential(
-        os.environ.get("AZURE_TENANT_ID"),
-        os.environ.get("AZURE_CLIENT_ID"),
-        os.environ.get("AZURE_CLIENT_SECRET"),
-    )
-    scopes = ["User.Read"]
-
     @router.post("/teams/events")
     async def teams_endpoint(req: Request):
         body = await req.json()
-
-        client = GraphServiceClient(credentials=credential, scopes=scopes)
-
         activity = Activity().deserialize(body)
         auth_header = req.headers.get("Authorization", "")
         response = await adapter.process_activity(activity, auth_header, bot.on_turn)
